@@ -9,8 +9,9 @@ const browserOptions = {
   ]
 };
 
-const userEmail = 'nobojib765@qlevjh.com'
-const userPassword = '123qwe';
+const userEmail = 'mancivoda+preprod0006@gmail.com';
+const userPassword = 'test123';
+
 const MAX_WINDOWS_AMOUNT = 5;
 const AACU_URL = 'https://auth.tmus.preprod.ticketmaster.net/archtics-consolidate/as/authorization.oauth2?lang=en-us&client_id=96f45441ad8a.web.iompreprod-iomedia_preprod.us&integratorId=nam&placementId=homepage&visualPresets=lafc&response_type=code&scope=openid%20profile%20phone%20offline_access%20email%20tm&redirect_uri=https://auth.tmus.preprod.ticketmaster.net/archtics-consolidate/demo-exchange/&state=asdf3ddkasdlfioiuysodjlfhaiuer';
 
@@ -22,15 +23,18 @@ async function signIn() {
   await page.goto(AACU_URL);
    
   const email = await page.waitForSelector('input[data-bdd="email-address-field"]');
-  await email.type(userEmail, {delay: 20});
+  await email.type(userEmail, {delay: 50});
 
   const password = await page.waitForSelector('input[data-bdd="password-field"]');
-  await password.type(userPassword, {delay: 20});
+  await password.type(userPassword, {delay: 50});
 
   const submitButton = await page.waitForSelector('button[data-bdd=next-button]');
   await submitButton.click();
 
-  await page.waitForXPath('//h1[contains(text(), "You are successfully authorized!")]');
+  await Promise.race([
+    page.waitForXPath('//h3[contains(text(), "Enter Your Phone Number")]'),
+    page.waitForXPath('//h1[contains(text(), "You are successfully authorized!")]')
+  ])
   console.log('SIGN IN: DONE');
   await page.waitFor(2000);
   browser.close();
